@@ -56,7 +56,7 @@ export default function Signup() {
           </div>
           <p className="text-center text-sm text-gray-600 mt-6">
             Already have an account?{" "}
-            <Link to="/" className="text-purple-700 font-medium hover:underline">
+            <Link to="/login" className="text-purple-700 font-medium hover:underline">
               Login
             </Link>
           </p>
