@@ -25,19 +25,32 @@ const register = async (req, res, next) => {
   }
 }
 
-const login=async(req,res,next)=>{
-        const{email,password}=req.body;
-        const user=await User.findOne({email});
-        if(!user){
-            return next(new AppError('Invalid email or password', 401));
-        }
-        const isPasswordValid=await bcrypt.compare(password,user.password);
-        if(!isPasswordValid){
-            return next(new AppError('Invalid email or password', 401));
-        }
-        const token=generateToken({id:user.id});
-        res.json({message:'Login successful',token});
-}
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select('+password');
+  if (!user) {
+    return next(new AppError('Invalid email or password', 401));
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return next(new AppError('Invalid email or password', 401));
+  }
+
+  const token = generateToken({ id: user._id });
+
+  const userData = user.toObject();
+  delete userData.password;
+  delete userData.__v;
+  
+  res.json({
+    message: 'Login successful',
+    token,
+    user: userData
+  });
+};
+
 
 
 const resetPassword = async (req, res, next) => {
@@ -58,10 +71,8 @@ const resetPassword = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     user.password = hashedPassword;
     await user.save();
-
     res.json({
       message: "Password reset successful",
     });
@@ -77,13 +88,11 @@ const getUserProfile = async (req, res, next) => {
     if (!userId) {
       return next(new AppError("Unauthorized", 401));
     }
-
     const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return next(new AppError("User not found", 404));
     }
-
     res.json({
       user,
     });

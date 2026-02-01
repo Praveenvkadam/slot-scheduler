@@ -7,7 +7,10 @@ export const useLogin = () => {
   const dispatch = useDispatch();
 
   return useMutation({
-    mutationFn: loginApi,
+    mutationFn: async (payload) => {
+      const response = await loginApi(payload);
+      return response.data; 
+    },
 
     onSuccess: (data) => {  
       const { user, token } = data;

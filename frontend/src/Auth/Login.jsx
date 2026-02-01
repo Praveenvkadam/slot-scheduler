@@ -5,6 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "../query/useLogin";
 import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../redux/auth_redux/authSlice";
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -24,13 +26,23 @@ const Login = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    mutate(data, {
-      onSuccess: () => {
-        navigate("/");
-      },
-    });
-  };
+ const dispatch = useDispatch();
+
+const onSubmit = (data) => {
+  mutate(data, {
+    onSuccess: (response) => {
+      dispatch(
+        setCredentials({
+          user: response.user,
+          token: response.token,
+        })
+      );
+
+      navigate("/");
+    },
+  });
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -40,7 +52,6 @@ const Login = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="bg-gray-100 rounded-3xl p-5 sm:p-8 space-y-5">
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -55,7 +66,6 @@ const Login = () => {
               )}
             </div>
 
-            {/* Password with eye toggle */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
@@ -77,7 +87,6 @@ const Login = () => {
               )}
             </div>
 
-            {/* API error */}
             {isError && (
               <p className="text-red-600 text-sm">
                 {error?.response?.data?.message || "Login failed"}

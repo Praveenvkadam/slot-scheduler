@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+.input {@apply w-full p-3 rounded-xl bg-white outline-none border-none;}
+.label {@apply block text-sm font-medium mb-1;}
+.error {@apply text-red-500 text-sm mt-1;}
+.eye {@apply absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer;}

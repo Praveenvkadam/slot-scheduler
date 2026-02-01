@@ -13,14 +13,12 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // Set auth state manually from React Query
     setCredentials: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isLoggedIn = true;
       state.error = null;
     },
-    // Clear auth state
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -31,7 +29,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Register lifecycle
+
       .addCase(register.pending, (state) => {
         state.status = "loading";
       })
@@ -46,7 +44,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Login lifecycle
       .addCase(login.pending, (state) => {
         state.status = "loading";
       })
@@ -61,7 +58,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Reset password lifecycle
       .addCase(resetPassword.pending, (state) => {
         state.status = "loading";
       })
@@ -76,7 +72,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Profile lifecycle
       .addCase(profile.pending, (state) => {
         state.status = "loading";
       })
