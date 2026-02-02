@@ -1,7 +1,6 @@
 const Slot = require("../models/slot.model")
 const User = require("../models/user.model")
 
-// 🔹 Get all slots (calendar)
 exports.getSlots = async (req, res) => {
   try {
     const slots = await Slot.find().populate("batchId", "month year batchNumber")
@@ -12,7 +11,6 @@ exports.getSlots = async (req, res) => {
 }
 
 
-// 🔹 Book a slot
 exports.bookSlot = async (req, res) => {
   try {
     const userId = req.user.id
@@ -21,19 +19,15 @@ exports.bookSlot = async (req, res) => {
     const slot = await Slot.findById(slotId)
     if (!slot) return res.status(404).json({ message: "Slot not found" })
 
-    // Slot full check
     if (slot.students.length >= slot.maxStudents)
       return res.status(400).json({ message: "Slot full" })
 
-    // Already booked check
     if (slot.students.includes(userId))
       return res.status(400).json({ message: "Already booked" })
 
-    // Add user to slot
     slot.students.push(userId)
     await slot.save()
 
-    // Add slot to user
     await User.findByIdAndUpdate(userId, {
       $addToSet: { selectedSlots: slotId }
     })
@@ -45,7 +39,7 @@ exports.bookSlot = async (req, res) => {
 }
 
 
-// 🔹 Cancel booking
+
 exports.cancelBooking = async (req, res) => {
   try {
     const userId = req.user.id
@@ -53,12 +47,9 @@ exports.cancelBooking = async (req, res) => {
 
     const slot = await Slot.findById(slotId)
     if (!slot) return res.status(404).json({ message: "Slot not found" })
-
-    // Remove user from slot
     slot.students.pull(userId)
     await slot.save()
 
-    // Remove slot from user
     await User.findByIdAndUpdate(userId, {
       $pull: { selectedSlots: slotId }
     })
@@ -70,7 +61,7 @@ exports.cancelBooking = async (req, res) => {
 }
 
 
-// 🔹 Get users who booked a slot (admin)
+
 exports.getSlotBookings = async (req, res) => {
   try {
     const { slotId } = req.params
@@ -91,7 +82,7 @@ exports.getSlotBookings = async (req, res) => {
   }
 }
 
-// 🔹 Get my booked slots
+
 exports.getMyBookedSlots = async (req, res) => {
   try {
     const userId = req.user.id
