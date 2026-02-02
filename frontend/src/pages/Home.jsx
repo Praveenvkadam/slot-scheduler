@@ -19,6 +19,7 @@ const Home = () => {
           >
             Login
           </button>
+          
         </div>
       </div>
     );
@@ -37,7 +38,12 @@ const Home = () => {
         <p><b>Email:</b> {user.email}</p>
         <p><b>Phone:</b> {user.phone}</p>
         <p><b>Role:</b> {user.role}</p>
-
+        <button
+            onClick={() => navigate("/cal")}
+            className="px-4 py-2 bg-purple-700 text-white rounded"
+          >
+            Calendar
+          </button>
         <button
           onClick={() => {
             dispatch(logout());
