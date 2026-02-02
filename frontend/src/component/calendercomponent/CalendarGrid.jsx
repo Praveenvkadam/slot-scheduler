@@ -20,7 +20,6 @@ export default function CalendarGrid({ year, month }) {
     cells.push(day);
   }
 
-  // trailing empty cells (always 6 rows = 42 cells)
   while (cells.length < 42) {
     cells.push(null);
   }
@@ -32,8 +31,7 @@ export default function CalendarGrid({ year, month }) {
     today.getDate() === day;
 
   return (
-    <div className="w-[980px]"> 
-      {/* Weekdays */}
+    <div className="w-[950px]"> 
       <div className="grid grid-cols-7 text-center text-3xl font-semibold text-gray-300 mb-2">
         {DAYS.map((d) => (
           <div key={d}>{d}</div>
@@ -41,7 +39,7 @@ export default function CalendarGrid({ year, month }) {
       </div>
 
       {/* Calendar */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 ">
         {cells.map((day, index) => (
           <div
             key={index}
