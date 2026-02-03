@@ -3,6 +3,7 @@ import CalendarGrid from "../component/calendercomponent/CalendarGrid";
 import DaysSidebar from "../component/calendercomponent/daysSidebar";
 import SelectedSlotsModal from "../component/popup_components/SelectedSlots";
 import MonthBar from "../component/calendercomponent/MonthBar";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const today = new Date();
@@ -52,7 +53,9 @@ export default function Home() {
       <div className="w-full max-w-8xl mx-auto p-6">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-3xl font-bold">Select your slots</h2>
-
+          <div>
+            <button><Link to="/login">Login</Link></button>
+          </div>
           <div className="flex flex-col items-end">
             <span className="text-lg font-semibold mb-2">
               Monthly Schedule
