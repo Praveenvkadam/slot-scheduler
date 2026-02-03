@@ -1,12 +1,8 @@
-const express = require("express")
-const router = express.Router()
+const router = require("express").Router()
+const ctrl = require("../controllers/batch.controller")
 
-const batchController = require("../controllers/batch.controller")
-const auth = require("../middlewares/auth.middleware")
-const { validate } = require("../middlewares/validate.middleware")
-const { generateBatchSchema } = require("../validators/batch.validator")
-
-
-router.post("/generate", auth, validate(generateBatchSchema), batchController.generateMonthlyBatches)
+router.post("/init-month", ctrl.initMonth)
+router.get("/", ctrl.getBatches)
+router.get("/:batchId/slots", ctrl.getBatchSlots)
 
 module.exports = router
