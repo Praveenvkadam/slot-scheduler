@@ -2,6 +2,7 @@ import { Clock } from "lucide-react"
 import { FaInstagram, FaFacebookF, FaTwitter, FaWhatsapp } from "react-icons/fa"
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { Link } from "react-router-dom"
 import axios from "axios"
 
 const api = axios.create({
@@ -83,7 +84,7 @@ export default function DaysSidebar() {
 
         <div className="pt-6">
           <button className="w-full bg-purple-800 hover:bg-purple-900 text-white font-semibold py-3.5 rounded transition-colors">
-            Submit
+          <Link to="/scheduled">  Submit</Link>
           </button>
         </div>
       </div>

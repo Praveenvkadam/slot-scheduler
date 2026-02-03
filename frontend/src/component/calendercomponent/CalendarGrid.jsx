@@ -77,17 +77,13 @@ export default function CalendarGrid({ year, month }) {
                 onClick={!isDisabled ? () => handleClick(day) : undefined}
                 className={`h-28 rounded-md p-3 flex flex-col justify-between
                   transition-all duration-150 ease-out
-                  ${
+                 ${
                     isDisabled
                       ? "bg-gray-100 text-gray-400"
-                      : `bg-purple-700 text-white cursor-pointer
-                         hover:-translate-y-0.5 hover:shadow-lg
-                         active:scale-[0.97] active:bg-purple-800
-                         ${
-                           isSelected
-                             ? "ring-2 ring-white ring-offset-2 ring-offset-purple-700"
-                             : ""
-                         }`
+                      : isSelected
+                        ? "bg-[#664275] text-white"
+                        : "bg-[#e2daff] text-black cursor-pointer hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.97]"
+                  }
                   }`}
               >
                 {!isDisabled && (
