@@ -2,34 +2,53 @@ import React from "react";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+const TOPICS = [
+  "Topic 1",
+  "Topic 2",
+  "Topic 3",
+  "Topic 4",
+  "Topic 5",
+  "Topic 6",
+  "Topic 7",
+];
+
 export default function CalendarGrid({ year, month }) {
-  // determine if a date is disabled based on 7-on / 2-off cycle
-  function isDisabledDay(date) {
+  function getDayMeta(date) {
     // Sunday is always disabled
-    if (date.getDay() === 0) return true;
+    if (date.getDay() === 0) {
+      return { disabled: true };
+    }
 
-    let validDayCount = 0;
+    let nonSundayIndex = 0;
 
-    // count non-Sunday days before this date
+    // Count non-Sunday days before this date
     for (let d = 1; d < date.getDate(); d++) {
       const current = new Date(year, month, d);
       if (current.getDay() !== 0) {
-        validDayCount++;
+        nonSundayIndex++;
       }
     }
 
-    // cycle length = 9 (7 enabled + 2 disabled)
-    const cycleIndex = validDayCount % 9;
+    // 7 active + 2 gap = 9-day cycle
+    const cycleIndex = nonSundayIndex % 9;
 
-    // last 2 days of cycle are disabled
-    return cycleIndex >= 7;
+    // gap days
+    if (cycleIndex >= 7) {
+      return { disabled: true };
+    }
+
+    const dayNumber = cycleIndex + 1;
+
+    return {
+      disabled: false,
+      dayNumber,
+      topic: TOPICS[dayNumber - 1],
+    };
   }
 
-  // calculate calendar layout
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // build 6-week grid
   const cells = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
@@ -37,33 +56,54 @@ export default function CalendarGrid({ year, month }) {
 
   return (
     <div className="w-[950px]">
-      {/* weekday header */}
-      <div className="grid grid-cols-7 text-center text-xl text-gray-300 mb-2">
+      {/* Week header */}
+      <div className="grid grid-cols-7 text-center text-sm text-gray-400 mb-2">
         {DAYS.map((d) => (
           <div key={d}>{d}</div>
         ))}
       </div>
 
-      {/* calendar grid */}
+      {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-2">
         {cells.map((day, i) => {
-          const date = day ? new Date(year, month, day) : null;
-          const disabled = !day || (date && isDisabledDay(date));
+          if (!day) {
+            return (
+              <div
+                key={i}
+                className="h-28 rounded-md bg-gray-100"
+              />
+            );
+          }
+
+          const date = new Date(year, month, day);
+          const meta = getDayMeta(date);
 
           return (
             <div
-              key={`${year}-${month}-${i}`}
+              key={`${year}-${month}-${day}`}
               className={`
-                h-28 rounded-md flex items-center justify-center
-                text-sm font-medium
+                h-28 rounded-md p-3 flex flex-col justify-between
                 ${
-                  disabled
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-amber-200 text-black cursor-pointer"
+                  meta.disabled
+                    ? "bg-gray-100 text-gray-400"
+                    : "bg-purple-700 text-white"
                 }
               `}
             >
-              {day || ""}
+              {!meta.disabled && (
+                <>
+                  <div className="text-sm font-semibold">
+                    Day {meta.dayNumber}
+                  </div>
+                  <div className="text-xs opacity-90">
+                    {meta.topic}
+                  </div>
+                </>
+              )}
+
+              <div className="text-xs text-right opacity-70">
+                {day.toString().padStart(2, "0")}
+              </div>
             </div>
           );
         })}
