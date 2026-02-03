@@ -1,12 +1,20 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+
 import CalendarGrid from "../component/calendercomponent/CalendarGrid";
 import DaysSidebar from "../component/calendercomponent/daysSidebar";
 import SelectedSlotsModal from "../component/popup_components/SelectedSlots";
 import MonthBar from "../component/calendercomponent/MonthBar";
-import { Link } from "react-router-dom";
+
+import { useLogout } from "../query/useLogout";
 
 export default function Home() {
   const today = new Date();
+  const navigate = useNavigate();
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const logout = useLogout();
 
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -43,6 +51,11 @@ export default function Home() {
     });
   }, [year, month]);
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <>
       <SelectedSlotsModal
@@ -53,9 +66,26 @@ export default function Home() {
       <div className="w-full max-w-8xl mx-auto p-6">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-3xl font-bold">Select your slots</h2>
+
+          {/* AUTH BUTTON */}
           <div>
-            <button><Link to="/login">Login</Link></button>
+            {!isLoggedIn ? (
+              <Link
+                to="/login"
+                className="px-4 py-2 rounded bg-purple-600 text-white"
+              >
+                Login
+              </Link>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded bg-red-600 text-white"
+              >
+                Logout
+              </button>
+            )}
           </div>
+
           <div className="flex flex-col items-end">
             <span className="text-lg font-semibold mb-2">
               Monthly Schedule
@@ -90,12 +120,8 @@ export default function Home() {
 
           <div className="flex">
             <DaysSidebar />
-
-            <div className="ml-2 flex items-start ">
-              <MonthBar
-                activeMonth={month}
-                onChange={setMonth}
-              />
+            <div className="ml-2 flex items-start">
+              <MonthBar activeMonth={month} onChange={setMonth} />
             </div>
           </div>
         </div>

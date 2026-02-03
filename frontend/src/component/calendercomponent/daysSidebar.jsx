@@ -2,7 +2,7 @@ import { Clock } from "lucide-react"
 import { FaInstagram, FaFacebookF, FaTwitter, FaWhatsapp } from "react-icons/fa"
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import axios from "axios"
 
 const api = axios.create({
@@ -29,7 +29,6 @@ export default function DaysSidebar() {
     return `${hours}:${minutes} hs`
   }
 
-  /* -------- FETCH USER BOOKINGS -------- */
   const { data: bookings = [] } = useQuery({
     queryKey: ["myBookings"],
     queryFn: async () => {
@@ -38,10 +37,11 @@ export default function DaysSidebar() {
     },
   })
 
+  const navigate = useNavigate()
+
   return (
     <div className="w-full max-w-[600px] bg-transparent rounded-lg shadow-sm font-sans flex flex-col gap-6">
 
-      {/* Time Header */}
       <div className="bg-[#f3f3f3] px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-gray-700" />
@@ -83,13 +83,14 @@ export default function DaysSidebar() {
         })}
 
         <div className="pt-6">
-          <button className="w-full bg-purple-800 hover:bg-purple-900 text-white font-semibold py-3.5 rounded transition-colors">
-          <Link to="/scheduled">  Submit</Link>
+          <button className="w-full bg-purple-800 hover:bg-purple-900 text-white font-semibold py-3.5 rounded transition-colors"
+          onClick={() => navigate("/scheduled")}
+          >
+           Submit
           </button>
         </div>
       </div>
 
-      {/* Footer */}
       <div className="bg-[#f3f3f3] px-6 py-4 flex items-center justify-start gap-4 rounded-b-lg whitespace-nowrap">
         <div className="flex gap-3 shrink-0">
           {[FaInstagram, FaFacebookF, FaTwitter, FaWhatsapp].map((Icon, i) => (

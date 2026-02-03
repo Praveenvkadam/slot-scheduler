@@ -21,7 +21,6 @@ const SelectedSlots = ({ isOpen, onClose }) => {
   const [confirmSlot, setConfirmSlot] = useState(null)
   const [successSlot, setSuccessSlot] = useState(null)
 
-  /* ---------- FETCH MY BOOKINGS ---------- */
   const { data: bookings = [] } = useQuery({
     queryKey: ["myBookings"],
     queryFn: async () => {
@@ -31,7 +30,6 @@ const SelectedSlots = ({ isOpen, onClose }) => {
     enabled: isOpen,
   })
 
-  /* ---------- CANCEL BOOKING ---------- */
   const cancelMutation = useMutation({
     mutationFn: async (slotId) => {
       await api.delete(`/bookings/${slotId}`)
@@ -47,14 +45,13 @@ const SelectedSlots = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* MAIN MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div
           className="absolute inset-0 bg-black/25 backdrop-blur-md"
           onClick={onClose}
         />
 
-        <div className="relative z-10 w-[95vw] max-w-none bg-white/85 backdrop-blur-lg rounded-2xl border border-white/40 shadow-2xl p-10">
+        <div className="relative z-10 w-[95vw] max-w-4xl bg-white/85 backdrop-blur-lg rounded-2xl border border-white/40 shadow-2xl p-10">
           <button
             onClick={onClose}
             className="absolute -top-3 -right-3 bg-gray-700 hover:bg-gray-800 text-white rounded-full p-2"
@@ -68,9 +65,10 @@ const SelectedSlots = ({ isOpen, onClose }) => {
 
           <div className="mb-8">
             <div
-              className="grid gap-4"
+              className="grid gap-4 justify-center" 
               style={{
-                gridTemplateColumns: `repeat(${bookings.length || 1}, minmax(0, 1fr))`,
+             
+                gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`,
               }}
             >
               {bookings.map((booking, index) => {
@@ -83,7 +81,7 @@ const SelectedSlots = ({ isOpen, onClose }) => {
                       {index + 1} Schedule
                     </div>
 
-                    <div className="bg-[#664275] rounded-lg p-4 text-white shadow-md flex items-center justify-center">
+                    <div className="bg-[#664275] rounded-lg px-1 py-12 min-h-[80px] text-white shadow-md flex items-center justify-center w-full">
                       <div className="flex items-center gap-3">
                         <div className="text-3xl font-bold">
                           {date.getDate().toString().padStart(2, "0")}
@@ -128,7 +126,7 @@ const SelectedSlots = ({ isOpen, onClose }) => {
         </div>
       </div>
 
-      {/* CONFIRM DELETE POPUP */}
+
       {confirmSlot && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl w-[320px] p-6 shadow-xl text-center">
@@ -161,7 +159,7 @@ const SelectedSlots = ({ isOpen, onClose }) => {
         </div>
       )}
 
-      {/* SUCCESS POPUP */}
+     
       {successSlot && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl w-[320px] p-6 shadow-xl text-center">
@@ -188,4 +186,4 @@ const SelectedSlots = ({ isOpen, onClose }) => {
   )
 }
 
-export default SelectedSlots
+export default SelectedSlots;
