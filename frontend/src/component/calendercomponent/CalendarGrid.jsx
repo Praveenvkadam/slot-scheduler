@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -12,16 +12,18 @@ const TOPICS = [
   "Topic 7",
 ];
 
-export default function CalendarGrid({ year, month }) {
+export default function CalendarGrid({ year, month, onDayClick }) {
+  const [selectedKey, setSelectedKey] = useState(null);
+
   function getDayMeta(date) {
-    // Sunday is always disabled
+    // Sunday always disabled
     if (date.getDay() === 0) {
       return { disabled: true };
     }
 
     let nonSundayIndex = 0;
 
-    // Count non-Sunday days before this date
+    // count non-Sunday days before this date
     for (let d = 1; d < date.getDate(); d++) {
       const current = new Date(year, month, d);
       if (current.getDay() !== 0) {
@@ -29,7 +31,7 @@ export default function CalendarGrid({ year, month }) {
       }
     }
 
-    // 7 active + 2 gap = 9-day cycle
+    // 7 active + 2 gap = 9 day cycle
     const cycleIndex = nonSundayIndex % 9;
 
     // gap days
@@ -46,6 +48,19 @@ export default function CalendarGrid({ year, month }) {
     };
   }
 
+  function handleClick(day, meta) {
+    const key = `${year}-${month}-${day}`;
+    setSelectedKey(key);
+
+    if (onDayClick) {
+      onDayClick({
+        date: new Date(year, month, day),
+        dayNumber: meta.dayNumber,
+        topic: meta.topic,
+      });
+    }
+  }
+
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -56,7 +71,7 @@ export default function CalendarGrid({ year, month }) {
 
   return (
     <div className="w-[950px]">
-      {/* Week header */}
+      {/* Weekday header */}
       <div className="grid grid-cols-7 text-center text-sm text-gray-400 mb-2">
         {DAYS.map((d) => (
           <div key={d}>{d}</div>
@@ -77,16 +92,33 @@ export default function CalendarGrid({ year, month }) {
 
           const date = new Date(year, month, day);
           const meta = getDayMeta(date);
+          const isSelected =
+            selectedKey === `${year}-${month}-${day}`;
 
           return (
             <div
               key={`${year}-${month}-${day}`}
+              onClick={
+                !meta.disabled
+                  ? () => handleClick(day, meta)
+                  : undefined
+              }
               className={`
                 h-28 rounded-md p-3 flex flex-col justify-between
+                transition-all duration-150 ease-out
                 ${
                   meta.disabled
                     ? "bg-gray-100 text-gray-400"
-                    : "bg-purple-700 text-white"
+                    : `
+                      bg-purple-700 text-white cursor-pointer
+                      hover:-translate-y-0.5 hover:shadow-lg
+                      active:scale-[0.97] active:bg-purple-800
+                      ${
+                        isSelected
+                          ? "ring-2 ring-white ring-offset-2 ring-offset-purple-700"
+                          : ""
+                      }
+                    `
                 }
               `}
             >
