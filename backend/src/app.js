@@ -1,38 +1,42 @@
 const express = require("express")
 const cors = require("cors")
 const dotenv = require("dotenv")
+const cron = require("node-cron")
+
+const generateMonthlyBatches = require("./utils/generateMonthlyBatches")
 
 dotenv.config()
 
 const authRouter = require("./routes/user.routers")
 const slotRouter = require("./routes/slot.routes")
-const batchRouter = require("./routes/batch.route") 
+const batchRouter = require("./routes/batch.route")
 const bookingRouter = require("./routes/booking.routes")
 
 const errorHandler = require("./errors/error.middleware")
 
-
 const app = express()
 
-// CORS
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true
-}))
 
-// Body parser
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true
+  })
+)
+
+
 app.use(express.json())
 
-// Health check
+
 app.get("/ping", (req, res) => res.send("pong"))
 
-// Routes
+
 app.use("/api/auth", authRouter)
 app.use("/api/slots", slotRouter)
 app.use("/api/batches", batchRouter)
 app.use("/api/bookings", bookingRouter)
 
-// JSON parse error handler (must be AFTER routes)
+
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({ message: "Invalid JSON format" })
@@ -41,13 +45,25 @@ app.use((err, req, res, next) => {
 })
 
 
-// 404 handler (before global error handler)
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" })
 })
 
 
-// Global error handler (last middleware always)
 app.use(errorHandler)
+
+
+cron.schedule("0 0 1 * *", async () => {
+  try {
+    const now = new Date()
+    const month = now.getMonth() + 1
+    const year = now.getFullYear()
+
+    await generateMonthlyBatches(month, year)
+    console.log(`Cron success: batches created for ${month}/${year}`)
+  } catch (err) {
+    console.error("Cron failed:", err)
+  }
+})
 
 module.exports = app
