@@ -21,6 +21,14 @@ const slotSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  startTime: {
+    type: String,
+    default: "10:00 AM"
+  },
+  endTime: {
+    type: String,
+    default: "12:00 PM"
+  },
 
   maxStudents: {
     type: Number,
